@@ -25,7 +25,7 @@ Proyek **E-Commerce Price Monitor** ini membangun *mini data pipeline* otomatis 
 ## Diagram Alur Data & Tools
 
 
-![alt text](image\data-flow-diagram.png)
+![alt text](image/data-flow-diagram.png)
 
 
 
