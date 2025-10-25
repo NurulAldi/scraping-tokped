@@ -14,12 +14,12 @@ Namun, masalahnya:
 
 ## Solusi Teknis
 
-Proyek **Mata-Mata Harga E-Commerce** ini membangun *mini data pipeline* otomatis yang:
+Proyek **E-Commerce Price Monitor** ini membangun *mini data pipeline* otomatis yang:
 
 1. **Mengambil data produk headphone bluetooth dari Tokopedia** menggunakan Search Query API Tokopedia.
 2. **Memproses dan membersihkan data** menggunakan Python (melalui notebook Jupyter).
 3. **Menyimpan hasil bersih ke BigQuery** sebagai database historis yang bisa diakses dan dianalisis kapan pun.
-4. (Opsional) **Menjalankan proses otomatis tiap pagi** dengan cron job atau GitHub Actions.
+4. **Menjalankan proses otomatis tiap pagi** GitHub Actions.
 
 ---
 
@@ -94,4 +94,74 @@ Memindahkan data hasil cleaning ke data warehouse **Google BigQuery** menggunaka
 # Konfigurasi BigQuery
 client = bigquery.Client.from_service_account_json("service-account.json")
 job_config = bigquery.LoadJobConfig(write_disposition="WRITE_APPEND")
+```
+
+## Automate using Github Actions
+
+### Prasyarat
+- Sudah membuat dataset dan tabel target di BigQuery
+- Memiliki service account dengan akses BigQuery 
+- Menyimpan kredensial dan konfigurasi berikut sebagai GitHub Secrets pada repository:
+	- `GCP_SERVICE_ACCOUNT` = isi file JSON service account
+	- `BQ_TABLE_ID` = target BigQuery dalam format `project_id.dataset.table`
+
+### workflow: `.github/workflows/etl.yml`
+
+```yaml
+name: ETL - Tokopedia Price Monitor
+
+on:
+	workflow_dispatch:
+	schedule:
+		# 01:00 UTC setiap hari (08:00 WIB).
+		- cron: '0 1 * * *'
+
+jobs:
+	run-etl:
+		runs-on: ubuntu-latest
+		steps:
+			- name: Checkout
+				uses: actions/checkout@v4
+
+			- name: Setup Python
+				uses: actions/setup-python@v5
+				with:
+					python-version: '3.10'
+
+			- name: Install dependencies
+				run: |
+					python -m pip install --upgrade pip
+					pip install -r requirements.txt
+					pip install papermill
+
+			- name: Write GCP service account key
+				# Simpan secrets ke file service-account.json di root repo
+				run: |
+					echo "${{ secrets.GCP_SERVICE_ACCOUNT }}" > service-account.json
+
+			- name: Extract - Scrape Tokopedia
+				run: |
+					python scripts/scrap.py
+
+			- name: Normalize raw path (optional)
+				# Jika script menyimpan file di root, pindahkan ke data/raw agar notebook bisa menemukannya
+				run: |
+					mkdir -p data/raw
+					if [ -f "hasil_tokopedia_scrap.json" ]; then mv hasil_tokopedia_scrap.json data/raw/hasil_tokopedia_scrap.json; fi
+
+			- name: Transform - Execute notebook with Papermill
+				run: |
+					papermill notebooks/prep_data.ipynb notebooks/prep_data.out.ipynb
+
+			- name: Load - Upload to BigQuery
+				env:
+					BQ_TABLE_ID: ${{ secrets.BQ_TABLE_ID }}
+				run: |
+					python scripts/upload_to_bigquery.py
+
+			- name: Persist cleaned artifact (optional)
+				uses: actions/upload-artifact@v4
+				with:
+					name: cleaned-csv
+					path: data/cleaned/tokopedia_headphone_cleaned.csv
 ```
