@@ -95,7 +95,7 @@ client = bigquery.Client.from_service_account_json("service-account.json")
 job_config = bigquery.LoadJobConfig(write_disposition="WRITE_APPEND")
 ```
 
-## Automate using Github Actions
+## Otomasi menggunakan Github Actions
 
 ### Prasyarat
 - Sudah membuat dataset dan tabel target di BigQuery
