@@ -10,7 +10,7 @@ Namun, masalahnya:
 - Tidak ada fitur bawaan Tokopedia yang menampilkan **riwayat harga kompetitor dari waktu ke waktu**.
 - Ia butuh cara **otomatis dan terstruktur** untuk mengumpulkan serta menganalisis data harga pesaing setiap hari.
 
----
+
 
 ## Solusi Teknis
 
@@ -21,12 +21,11 @@ Proyek **E-Commerce Price Monitor** ini membangun *mini data pipeline* otomatis 
 3. **Menyimpan hasil bersih ke BigQuery** sebagai database historis yang bisa diakses dan dianalisis kapan pun.
 4. **Menjalankan proses otomatis tiap pagi** GitHub Actions.
 
----
 
 ## Diagram Alur Data & Tools
 
 
-![alt text](image\data-flow-diagram.png)
+![alt text](image/data-flow-diagram.png)
 
 
 
@@ -38,7 +37,7 @@ Proyek **E-Commerce Price Monitor** ini membangun *mini data pipeline* otomatis 
 | Data Storage | Menyimpan data historis | **Google BigQuery** |
 | Automation | Menjalankan scraping terjadwal | **GitHub Actions** |
 
----
+
 
 ## 🔄 Pipeline Data
 
@@ -96,7 +95,7 @@ client = bigquery.Client.from_service_account_json("service-account.json")
 job_config = bigquery.LoadJobConfig(write_disposition="WRITE_APPEND")
 ```
 
-## Automate using Github Actions
+## Otomasi menggunakan Github Actions
 
 ### Prasyarat
 - Sudah membuat dataset dan tabel target di BigQuery
