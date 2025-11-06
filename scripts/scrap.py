@@ -8,7 +8,7 @@ headers = {
     "accept": "*/*",
     "content-type": "application/json",
     "referer": "https://www.tokopedia.com/",
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36", # Contoh, ganti pakai punya lo
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
     "x-source": "tokopedia-lite",
     "x-tkpd-lite-service": "zeus",
     "x-dark-mode": "false",
@@ -31,12 +31,13 @@ semua_produk = []
 halaman_sekarang = 1
 jumlah_produk_per_halaman = 60
 total_produk_didapat = 0
-maks_halaman = 6
+maks_halaman = 2
+params_sekarang = base_payload[0]['variables']['params']
+
 
 while True:
     print(f"Mengambil halaman {halaman_sekarang}...")
     try:
-        params_sekarang = base_payload[0]['variables']['params']
         params_sekarang = params_sekarang.replace(f"page={halaman_sekarang-1}", f"page={halaman_sekarang}")
         start_sebelumnya = (halaman_sekarang - 2) * jumlah_produk_per_halaman
         start_sekarang = (halaman_sekarang - 1) * jumlah_produk_per_halaman
@@ -100,6 +101,6 @@ while True:
 
 print(f"\nTotal produk yang berhasil di-scrape: {len(semua_produk)}")
 
-with open('../data/raw/hasil_tokopedia_scrap.json', 'w', encoding='utf-8') as f:
+with open('data/raw/hasil_tokopedia_scrap.json', 'w', encoding='utf-8') as f:
     json.dump(semua_produk, f, ensure_ascii=False, indent=4)
-print("Data disimpan ke hasil_tokopedia.json")
+print("Data disimpan ke hasil_tokopedia_scrap.json")
