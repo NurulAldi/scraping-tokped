@@ -2,6 +2,7 @@ from google.cloud import bigquery
 import pandas as pd
 
 df = pd.read_csv("data/cleaned/tokopedia_headphone_cleaned.csv")
+df['timestamp'] = pd.to_datetime(df['timestamp'])
 
 client = bigquery.Client.from_service_account_json("service-account.json")
 
