@@ -3,9 +3,9 @@ import pandas as pd
 
 df = pd.read_csv("data/cleaned/tokopedia_headphone_cleaned.csv")
 
-client = bigquery.Client.from_service_account_json("marketing-data-pipeline-475911-d068969bbb6e.json")
+client = bigquery.Client.from_service_account_json("service-account.json")
 
-table_id = "service-account.json"
+table_id = "marketing-data-pipeline-475911.tokped_scrap.headphone_bluetooth"
 
 job = client.load_table_from_dataframe(
     df,
