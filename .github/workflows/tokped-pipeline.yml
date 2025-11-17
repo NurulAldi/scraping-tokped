@@ -1,0 +1,32 @@
+name: Tokopedia Data Pipeline
+
+on:
+    schedule:
+      - cron: '0 1 * * *'
+    workflow_dispatch:
+
+jobs:
+    run-pipeline:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v3
+
+          - name: Setup Python
+            uses: actions/setup-python@v4
+            with:
+                python-version: '3.10'
+          
+          - name: Install dependencies
+            run: pip install -r requirements.txt
+        
+          - name: Decode service account
+            run: echo "${{ secrets.GCP_KEY_B64 }}" | base64 -d > service-account.json
+
+          - name: Run scraping
+            run: python scripts/scrap.py
+
+          - name: Run transform
+            run: python scripts/prep_data.py
+
+          - name: Upload to BigQuery
+            run: python scripts/upload_to_bigquery.py
