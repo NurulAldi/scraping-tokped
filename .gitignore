@@ -1,3 +1,4 @@
+.env
 venv
 service-account.json
 service-account.json.b64

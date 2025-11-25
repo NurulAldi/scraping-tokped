@@ -1,6 +1,7 @@
 import requests
 import json
 import time
+from datetime import datetime
 
 url = "https://gql.tokopedia.com/graphql/SearchProductV5Query"
 
@@ -101,6 +102,9 @@ while True:
 
 print(f"\nTotal produk yang berhasil di-scrape: {len(semua_produk)}")
 
-with open('data/raw/hasil_tokopedia_scrap.json', 'w', encoding='utf-8') as f:
+tanggal = datetime.now().strftime("%m_%d_%Y")
+nama_file = f'data/raw/hasil_tokopedia_scrap_{tanggal}.json'
+
+with open(nama_file, 'w', encoding='utf-8') as f:
     json.dump(semua_produk, f, ensure_ascii=False, indent=4)
-print("Data disimpan ke hasil_tokopedia_scrap.json")
+print(f"Data disimpan {nama_file}")

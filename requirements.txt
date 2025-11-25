@@ -3,3 +3,5 @@ pandas
 google-cloud-bigquery
 pyarrow
 pandas_gbq
+boto3
+python-dotenv
